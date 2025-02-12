@@ -2,11 +2,12 @@ use shaku::module;
 use std::sync::Arc;
 
 use crate::usecase::UserUseCaseImpl;
+use crate::infrastructure::repositories::user_repository::UserRepositoryImpl;
 
 // DIモジュールの定義
 module! {
     pub DIContainer {
-        components = [UserUseCaseImpl],
+        components = [UserUseCaseImpl, UserRepositoryImpl],
         providers = []
     }
 }
