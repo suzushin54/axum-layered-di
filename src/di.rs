@@ -3,17 +3,26 @@ use std::sync::Arc;
 
 use crate::usecase::UserUseCaseImpl;
 use crate::infrastructure::repositories::user_repository::UserRepositoryImpl;
+use crate::infrastructure::mysql_client::{MysqlClientImpl, MysqlClientImplParameters};
+use crate::config::Config;
+use sqlx::MySqlPool;
 
-// DIモジュールの定義
 module! {
     pub DIContainer {
-        components = [UserUseCaseImpl, UserRepositoryImpl],
+        components = [UserUseCaseImpl, UserRepositoryImpl, MysqlClientImpl],
         providers = []
     }
 }
 
-// DIコンテナのインスタンスを作成する関数
-pub fn create_container() -> Arc<DIContainer> {
+pub async fn create_container() -> anyhow::Result<Arc<DIContainer>> {
+    let config = Config::from_env();
+    let pool = MySqlPool::connect(&config.database_url).await?;
+    let pool = Arc::new(pool);
+    
     let builder = DIContainer::builder();
-    Arc::new(builder.build())
+    let container = builder
+        .with_component_parameters::<MysqlClientImpl>(MysqlClientImplParameters { pool })
+        .build();
+    
+    Ok(Arc::new(container))
 } 
