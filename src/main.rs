@@ -6,6 +6,7 @@ mod router;
 mod app_state;
 mod di;
 mod config;
+mod pkg;
 
 use crate::di::create_container;
 use crate::router::create_router;

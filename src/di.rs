@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use crate::usecase::UserUseCaseImpl;
 use crate::infrastructure::repositories::user_repository::UserRepositoryImpl;
-use crate::infrastructure::mysql_client::{MysqlClientImpl, MysqlClientImplParameters};
+use crate::pkg::database::mysql::{MysqlClientImpl, MysqlClientImplParameters};
 use crate::config::Config;
 use sqlx::MySqlPool;
 

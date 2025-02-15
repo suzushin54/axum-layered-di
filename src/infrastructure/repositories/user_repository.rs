@@ -4,7 +4,7 @@ use std::sync::Arc;
 use sqlx::FromRow;
 use chrono::{DateTime, Utc};
 use crate::repository_interfaces::UserRepository;
-use crate::infrastructure::mysql_client::IMysqlClient;
+use crate::pkg::database::mysql::IMysqlClient;
 
 #[derive(FromRow)]
 struct ProductRow {
