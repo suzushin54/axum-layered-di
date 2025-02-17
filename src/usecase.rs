@@ -24,9 +24,9 @@ impl UserUseCase for UserUseCaseImpl {
 }
 
 // NOTE: shakuがコンポーネントの生成を管理するため不要（説明のため残している）
-#[allow(dead_code)]
-impl UserUseCaseImpl {
-    fn new(repository: Arc<dyn UserRepository>) -> Self {
-        Self { user_repository: repository }
-    }
-} 
+// #[allow(dead_code)]
+// impl UserUseCaseImpl {
+//     fn new(repository: Arc<dyn UserRepository>) -> Self {
+//         Self { user_repository: repository }
+//     }
+// } 
