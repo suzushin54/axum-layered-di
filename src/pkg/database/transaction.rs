@@ -4,7 +4,7 @@ use anyhow::Result;
 use std::future::Future;
 
 pub async fn transaction<F, Fut, T>(
-    pool: Arc<sqlx::MySqlPool>,
+    pool: &Arc<sqlx::MySqlPool>,
     f: F,
 ) -> Result<T>
 where

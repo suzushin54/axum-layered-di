@@ -5,7 +5,6 @@ use sqlx::FromRow;
 use chrono::{DateTime, Utc};
 use crate::repository_interfaces::UserRepository;
 use crate::pkg::database::mysql::IMysqlClient;
-use crate::pkg::database::transaction;
 use anyhow::Result;
 use uuid::Uuid;
 
@@ -62,21 +61,17 @@ impl UserRepository for UserRepositoryImpl {
     async fn save(&self, name: String, description: Option<String>, price: i32) -> Result<()> {
         let pool = self.mysql_client.get_pool();
         
-        transaction(pool, |tx| async {
-            let id = Uuid::new_v4().to_string();
-            
-            sqlx::query(
-                "INSERT INTO products (id, name, description, price) VALUES (?, ?, ?, ?)"
-            )
-            .bind(id)
-            .bind(name)
-            .bind(description)
-            .bind(price)
-            .execute(tx)
-            .await?;
-
-            Ok(())
-        })
+        sqlx::query(
+            "INSERT INTO products (id, name, description, price) VALUES (?, ?, ?, ?)"
+        )
+        .bind(Uuid::new_v4().to_string())
+        .bind(name)
+        .bind(description)
+        .bind(price)
+        .execute(&*pool)
         .await
+        .map_err(|e| anyhow::anyhow!(e))?;
+
+        Ok(())
     }
 }
