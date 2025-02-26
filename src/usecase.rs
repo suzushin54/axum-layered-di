@@ -4,7 +4,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use crate::repository_interfaces::UserRepository;
 use crate::pkg::database::mysql::IMysqlClient;
-use crate::pkg::database::transaction;
+use crate::pkg::database::run_transaction;
 
 #[async_trait]
 pub trait UserUseCase: Interface {
@@ -30,19 +30,12 @@ impl UserUseCase for UserUseCaseImpl {
 
     async fn create_product(&self, name: String, description: Option<String>, price: i32) -> Result<()> {
         let pool = self.mysql_client.get_pool();
-        
-        transaction(&pool, |_tx| async move {
-            self.user_repository.save(name, description, price).await?;
+        let user_repository = Arc::clone(&self.user_repository); // move するために clone
+
+        run_transaction(&pool, move |_tx| async move {
+            user_repository.save(name, description, price).await?;
             Ok(())
         })
         .await
     }
 }
-
-// NOTE: shakuがコンポーネントの生成を管理するため不要（説明のため残している）
-// #[allow(dead_code)]
-// impl UserUseCaseImpl {
-//     fn new(repository: Arc<dyn UserRepository>) -> Self {
-//         Self { user_repository: repository }
-//     }
-// } 

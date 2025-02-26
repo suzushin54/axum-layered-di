@@ -1,4 +1,4 @@
 pub mod mysql;
 pub mod transaction; 
 
-pub use transaction::transaction;
+pub use transaction::run_transaction;
